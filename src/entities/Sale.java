@@ -78,18 +78,13 @@ public class Sale {
 		Sale other = (Sale) obj;
 		return Objects.equals(seller, other.seller);
 	}
-
-	public double totalSale() {
-		double sum = 0.0;
-		sum += total;
-
-		return sum;
-
+	public Double averagePrice() {
+		return total / items;
 	}
 
 	@Override
 	public String toString() {
-		return getSeller() + "- R$" + " " + String.format("%.2f", totalSale());
+		return getSeller() + "- R$" + " " + String.format("%.2f", averagePrice());
 
 	}
 

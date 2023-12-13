@@ -3,13 +3,12 @@ package application;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import entities.Sale;
 
@@ -25,7 +24,7 @@ public class Program {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 
-			Set<Sale> set = new HashSet<>();
+			List<Sale> list = new ArrayList<>();
 			String line = br.readLine();
 			while (line != null) {
 
@@ -37,18 +36,29 @@ public class Program {
 				Integer items = Integer.parseInt(fields[3]);
 				Double total = Double.parseDouble(fields[4]);
 
-				set.add(new Sale(month, year, seller, items, total));
+				list.add(new Sale(month, year, seller, items, total));
 
 				line = br.readLine();
 
 			}
 
-			double sum = set.stream().map(s -> s.getTotal()).reduce(0.0, (x, y) -> x + y);
-
+			Map<String, Double> map = new HashMap<>();
+			for(Sale sale : list) {
+					map.put(sale.getSeller(), 0.0);
+			}
+			
+			for(String seller : map.keySet()) {
+				double total = list.stream()
+						.filter(s -> s.getSeller().equals(seller))
+						.map(s -> s.getTotal())
+						.reduce(0.0, (x, y) -> x + y);
+				map.put(seller, total);
+			}
+			System.out.println();
 			System.out.println("Total de vendas por vendedor: ");
-
-			for (Sale sale : set) {
-				System.out.println(sale);
+			
+			for (String seller : map.keySet()) {
+				System.out.printf(seller + " - R$ %.2f%n", map.get(seller));
 			}
 
 		}
